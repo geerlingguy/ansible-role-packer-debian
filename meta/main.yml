@@ -1,0 +1,21 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: geerlingguy
+  description: Debian/Ubuntu configuration for Packer.
+  company: "Midwestern Mac, LLC"
+  license: "license (BSD, MIT)"
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - all
+  categories:
+    - cloud
+    - system
+    - packaging
+    - development

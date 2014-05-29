@@ -1,0 +1,113 @@
+---
+# TODO: Consider adding "upgrade=full" to also update everything.
+- name: Ensure apt cache is updated.
+  apt: >
+    update_cache=yes
+    cache_valid_time=3600
+
+- name: Ensure correct kernel headers are installed.
+  shell: "apt-get -y install linux-headers-$(uname -r)"
+
+- name: Add configuration to update apt cache on boot.
+  copy: >
+    src=refresh-apt.conf
+    dest=/etc/init/refresh-apt.conf
+    owner=root group=root mode=644
+
+# SSH daemon configuration.
+- name: Configure SSH daemon.
+  lineinfile: >
+    dest=/etc/ssh/sshd_config
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    state=present
+  with_items:
+    - { regexp: '^UseDNS', line: 'UseDNS no' }
+    - { regexp: '^GSSAPIAuthentication', line: 'GSSAPIAuthentication no' }
+
+# Vagrant SSH configuration.
+- name: Configure Vagrant .ssh directory.
+  file: >
+    path=/home/vagrant/.ssh
+    state=directory
+    owner=vagrant group=vagrant mode=700
+
+- name: Get Vagrant's public key.
+  get_url: >
+    url=https://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub
+    dest=/home/vagrant/.ssh/authorized_keys
+    owner=vagrant
+    group=vagrant
+    mode=600
+
+# VirtualBox tools installation.
+- name: Get VirtualBox version.
+  shell: cat /home/vagrant/.vbox_version
+  register: virtualbox_version
+
+- name: Mount VirtualBox guest additions ISO.
+  mount: >
+    name=/tmp/vbox
+    src=/home/vagrant/VBoxGuestAdditions_{{ virtualbox_version.stdout }}.iso
+    opts=loop
+    state=mounted
+    fstype=iso9660
+
+- name: Run VirtualBox guest additions installation.
+  shell: sh /tmp/vbox/VBoxLinuxAdditions.run
+  failed_when: false
+
+- name: Unmount VirtualBox guest additions ISO.
+  mount: >
+    name=/tmp/vbox
+    src=/home/vagrant/VBoxGuestAdditions_{{ virtualbox_version.stdout }}.iso
+    state=unmounted
+    fstype=iso9660
+
+- name: Remove all ISOs in vagrant home directory.
+  shell: "rm /home/vagrant/*.iso"
+
+# Cleanup tasks.
+- name: Remove unneeded packages.
+  apt: "pkg={{ item }} state=absent"
+  with_items:
+    - ppp
+    - pppconfig
+    - pppoeconf
+    - cpp
+    - gcc
+    - g++
+    - libx11-data
+    - xauth
+    - libxmuu1
+    - libxcb1
+    - libx11-6
+    - libxext6
+
+- name: Remove uneeded packages (by regex).
+  shell: "apt-get remove -s '{{ item }}'"
+  with_items:
+    - "linux-image-3.*-generic"
+    - "linux-source"
+    - "*-dev"
+
+- name: Clean up apt.
+  command: "{{ item }}"
+  with_items:
+    - apt-get -y autoremove
+    - apt-get -y clean
+
+- name: Remove any remnants of VirtualBox ISOs.
+  shell: rm -rf VBoxGuestAdditions_*.iso VBoxGuestAdditions_*.iso.?
+
+- name: Remove RedHat interface persistence (step 1).
+  shell: rm -f /etc/udev/rules.d/70-persistent-net.rules
+
+- name: Remove RedHat interface persistence (step 2).
+  lineinfile: >
+    dest=/etc/sysconfig/network-scripts/ifcfg-eth0
+    regexp="{{ item }}"
+    state=absent
+  with_items:
+    - '^HWADDR'
+    - '^UUID'
