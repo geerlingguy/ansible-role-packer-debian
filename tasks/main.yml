@@ -83,13 +83,10 @@
     - libxcb1
     - libx11-6
     - libxext6
+    - linux-source
 
 - name: Remove uneeded packages (by regex).
-  shell: "apt-get remove -s '{{ item }}'"
-  with_items:
-    - "linux-image-3.*-generic"
-    - "linux-source"
-    - "*-dev"
+  shell: "apt-get -y remove '.*-dev$'"
 
 - name: Clean up apt.
   command: "{{ item }}"
