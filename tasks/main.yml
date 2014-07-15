@@ -64,9 +64,6 @@
     state=unmounted
     fstype=iso9660
 
-- name: Remove all ISOs in vagrant home directory.
-  shell: "rm /home/vagrant/*.iso"
-
 # Cleanup tasks.
 - name: Remove unneeded packages.
   apt: "pkg={{ item }} state=absent"
@@ -93,18 +90,3 @@
   with_items:
     - apt-get -y autoremove
     - apt-get -y clean
-
-- name: Remove any remnants of VirtualBox ISOs.
-  shell: rm -rf VBoxGuestAdditions_*.iso VBoxGuestAdditions_*.iso.?
-
-- name: Remove RedHat interface persistence (step 1).
-  shell: rm -f /etc/udev/rules.d/70-persistent-net.rules
-
-- name: Remove RedHat interface persistence (step 2).
-  lineinfile: >
-    dest=/etc/sysconfig/network-scripts/ifcfg-eth0
-    regexp="{{ item }}"
-    state=absent
-  with_items:
-    - '^HWADDR'
-    - '^UUID'
