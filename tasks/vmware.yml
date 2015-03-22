@@ -1,0 +1,3 @@
+---
+- name: Install VMware tools.
+  apt: name=open-vm-tools state=installed
