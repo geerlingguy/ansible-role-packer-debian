@@ -40,10 +40,14 @@
     group=vagrant
     mode=600
 
-# VirtualBox tools installation.
+# VirtualBox tools installation (if we're using VirtualBox).
+- stat: path=/home/vagrant/.vbox_version
+  register: virtualbox_check
+
 - name: Get VirtualBox version.
   shell: cat /home/vagrant/.vbox_version
   register: virtualbox_version
+  when: virtualbox_check.stat.exists
 
 - name: Mount VirtualBox guest additions ISO.
   mount: >
@@ -52,10 +56,12 @@
     opts=loop
     state=mounted
     fstype=iso9660
+  when: virtualbox_check.stat.exists
 
 - name: Run VirtualBox guest additions installation.
   shell: sh /tmp/vbox/VBoxLinuxAdditions.run
   failed_when: false
+  when: virtualbox_check.stat.exists
 
 - name: Unmount VirtualBox guest additions ISO.
   mount: >
@@ -63,6 +69,7 @@
     src=/home/vagrant/VBoxGuestAdditions_{{ virtualbox_version.stdout }}.iso
     state=unmounted
     fstype=iso9660
+  when: virtualbox_check.stat.exists
 
 # Cleanup tasks.
 - name: Remove unneeded packages.
