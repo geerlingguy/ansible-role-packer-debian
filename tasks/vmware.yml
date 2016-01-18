@@ -28,7 +28,7 @@
     name: /tmp/vmfusion
     src: /home/vagrant/linux.iso
     fstype: iso9660
-    state: unmounted
+    state: absent
 
 - name: Remove temporary directories for VMware tools.
   file:
@@ -37,3 +37,8 @@
   with_items:
     - vmfusion
     - vmfusion-archive
+
+- name: Delete VMWare Tools.
+  file:
+    src: /home/vagrant/linux.iso
+    stage: absent
