@@ -19,5 +19,10 @@
   mount:
     name: /tmp/vbox
     src: "/home/vagrant/VBoxGuestAdditions_{{ virtualbox_version.stdout }}.iso"
-    state: unmounted
+    state: absent
     fstype: iso9660
+
+- name: Delete VirtualBox guest additions ISO.
+  file:
+    src: "/home/vagrant/VBoxGuestAdditions_{{ virtualbox_version.stdout }}.iso"
+    stage: absent
