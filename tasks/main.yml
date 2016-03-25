@@ -64,7 +64,7 @@
 
 # Cleanup tasks.
 - name: Remove unneeded packages.
-  apt: "pkg={{ item }} state=absent"
+  apt: "name={{ item }} state=absent"
   with_items:
     - ppp
     - pppconfig
