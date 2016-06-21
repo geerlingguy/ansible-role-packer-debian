@@ -10,6 +10,11 @@
     - vmfusion
     - vmfusion-archive
 
+- name: Create /mnt/hgfs directory for synced folder mounts.
+  file:
+    path: /mnt/hgfs
+    state: directory
+
 - name: Mount VMware tools.
   mount:
     name: /tmp/vmfusion
