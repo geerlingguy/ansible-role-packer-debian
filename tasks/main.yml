@@ -80,7 +80,7 @@
     - libxext6
     - linux-source
 
-- name: Remove uneeded packages (by regex).
+- name: Remove unneeded packages (by regex).
   shell: "apt-get -y remove '.*-dev$'"
 
 - name: Clean up apt.
