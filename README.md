@@ -10,6 +10,8 @@ The role may be made more flexible in the future, so it could work with other Li
 
 Prior to running this role via Packer, you need to make sure Ansible is installed via a shell provisioner, and that preliminary VM configuration (like adding a vagrant user to the appropriate group and the sudoers file) is complete, generally by using a Kickstart installation file (e.g. `ks.cfg`) with Packer. An example array of provisioners for your Packer .json template would be something like:
 
+```json
+
     "provisioners": [
       {
         "type": "shell",
@@ -25,24 +27,48 @@ Prior to running this role via Packer, you need to make sure Ansible is installe
       }
     ],
 
+```
+
 The files should contain, at a minimum:
 
 **scripts/ansible.sh**:
 
-    #!/bin/bash -eux
-    # Install Ansible repository and Ansible.
-    apt-add-repository ppa:rquillo/ansible
-    apt-get update
-    apt-get install ansible
+An example for Ubuntu 16.04
+
+```bash
+#!/bin/bash -eux
+# Install Ansible repository and Ansible.
+apt -y install software-properties-common
+apt-add-repository ppa:ansible/ansible
+apt-get update
+apt-get install ansible
+```
+
+An example for Debian 8.8
+
+```bash
+#!/bin/bash -eux
+
+# Install Ansible repository and Ansible
+apt -y install software-properties-common
+echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" | tee -a /etc/apt/sources.list
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+apt -y update
+apt -y install ansible
+```
+
 
 **ansible/main.yml**:
 
-    ---
-    - hosts: all
-      sudo: yes
-      gather_facts: yes
-      roles:
-        - geerlingguy.packer-debian
+```
+---
+- hosts: all
+  sudo: yes
+  gather_facts: yes
+  roles:
+    - geerlingguy.packer-debian
+```
+
 
 You might also want to add another shell provisioner to run cleanup, erasing free space using `dd`, but this is not required (it will just save a little disk space in the Packer-produced .box file).
 
@@ -50,7 +76,22 @@ If you'd like to add additional roles, make sure you add them to the `role_paths
 
 ## Role Variables
 
-None.
+### vmware_install_open_vm_tools: "false"
+
+Using the vmware_install_open_vm_tools variable you can select what kind of integration components will be installed into the VMware box
+
+Default value of vmware_install_open_vm_tools is "false" what means that VMware Tools (not open-vm-tools) will be installed.
+
+Description of open-vm-tools and VMwareTools
+
+- [open-vm-tools](https://sourceforge.net/projects/open-vm-tools/)
+- [VMware Tools](https://kb.vmware.com/selfservice/search.do?cmd=displayKC&docType=kc&docTypeID=DT_KB_1_1&externalId=340)
+
+More about differences beetwen these two options you can read:
+
+- [VMware support for Open VM Tools (2073803)](https://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2073803) 
+- [the open-vm-tools project page on GitHub](https://github.com/vmware/open-vm-tools)
+
 
 ## Dependencies
 
@@ -58,9 +99,12 @@ None.
 
 ## Example Playbook
 
-    - hosts: all
-      roles:
-        - geerlingguy.packer-debian
+```
+---
+- hosts: all
+  roles:
+    - geerlingguy.packer-debian
+```
 
 ## License
 
