@@ -2,13 +2,11 @@
 
 [![Build Status](https://travis-ci.org/geerlingguy/ansible-role-packer-debian.svg?branch=master)](https://travis-ci.org/geerlingguy/ansible-role-packer-debian)
 
-This role configures Debian/Ubuntu (either minimal or full install) in preparation for it to be packaged as part of a .box file for Vagrant/VirtualBox deployment using [Packer](http://www.packer.io/).
-
-The role may be made more flexible in the future, so it could work with other Linux flavors and/or other Packer builders besides VirtualBox, but I'm currently only focused on VirtualBox, since the main use case right now is developer VMs.
+This role configures Debian/Ubuntu (either minimal or full install) in preparation for it to be packaged as part of a .box file for Vagrant/VirtualBox or Vagrant/Vmware_desktop deployment using [Packer](http://www.packer.io/).
 
 ## Requirements
 
-Prior to running this role via Packer, you need to make sure Ansible is installed via a shell provisioner, and that preliminary VM configuration (like adding a vagrant user to the appropriate group and the sudoers file) is complete, generally by using a Kickstart installation file (e.g. `ks.cfg`) with Packer. An example array of provisioners for your Packer .json template would be something like:
+Prior to running this role via Packer, you need to make sure Ansible is installed via a shell provisioner, and that preliminary VM configuration (like adding a vagrant user to the appropriate group and the sudoers file) is complete, generally by using a Kickstart installation file (e.g. `ks.cfg`) or [preseeding method](https://help.ubuntu.com/lts/installation-guide/s390x/apbs02.html) with Packer. An example array of provisioners for your Packer .json template would be something like:
 
 ```json
 
@@ -76,11 +74,13 @@ If you'd like to add additional roles, make sure you add them to the `role_paths
 
 ## Role Variables
 
-### vmware_install_open_vm_tools: "false"
+Available variables are listed below, along with default values (see defaults/main.yml):
 
-Using the vmware_install_open_vm_tools variable you can select what kind of integration components will be installed into the VMware box
+```
+vmware_install_open_vm_tools: "false"
+```
 
-Default value of vmware_install_open_vm_tools is "false" what means that VMware Tools (not open-vm-tools) will be installed.
+Using the vmware_install_open_vm_tools variable you can select what kind of integration components will be installed into the VMware box. Default value of vmware_install_open_vm_tools is "false" what means that VMware Tools (not open-vm-tools) will be installed.
 
 Description of open-vm-tools and VMwareTools
 
