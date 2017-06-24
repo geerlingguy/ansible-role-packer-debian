@@ -60,7 +60,7 @@
   register: vmware_check
 
 - include: vmware.yml
-  when: vmware_check.stdout != 0
+  when: vmware_check.stdout > 0
 
 # Cleanup tasks.
 - name: Remove unneeded packages.
