@@ -54,13 +54,13 @@
 
 # VMware tools installation.
 - name: Check if VMWare is running the guest VM.
-  shell: "cat /proc/scsi/scsi | grep VMware"
+  shell: "dmesg | grep VMware | wc -l"
   changed_when: false
   failed_when: false
   register: vmware_check
 
 - include: vmware.yml
-  when: vmware_check.rc == 0
+  when: vmware_check.stdout > 0
 
 # Cleanup tasks.
 - name: Remove unneeded packages.
@@ -80,7 +80,7 @@
     - libxext6
     - linux-source
 
-- name: Remove uneeded packages (by regex).
+- name: Remove unneeded packages (by regex).
   shell: "apt-get -y remove '.*-dev$'"
 
 - name: Clean up apt.
