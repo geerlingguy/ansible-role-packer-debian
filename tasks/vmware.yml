@@ -9,6 +9,7 @@
   apt: name=open-vm-tools state=installed
   when: vmware_install_open_vm_tools | bool
 
+# Install VMware Tools when running under VMware.
 - block:
 
   - name: Create temporary directories for VMware tools.
@@ -57,5 +58,5 @@
       path: /home/vagrant/linux.iso
       state: absent
     
-  when: not ( vmware_install_open_vm_tools | bool )
+  when: not (vmware_install_open_vm_tools | bool)
   

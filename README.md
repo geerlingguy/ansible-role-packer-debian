@@ -58,7 +58,7 @@ apt -y install ansible
 
 **ansible/main.yml**:
 
-```
+```yaml
 ---
 - hosts: all
   sudo: yes
