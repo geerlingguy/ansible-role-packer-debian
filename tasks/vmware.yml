@@ -1,5 +1,4 @@
 ---
-
 - name: Create /mnt/hgfs directory for synced folder mounts.
   file:
     path: /mnt/hgfs
@@ -7,11 +6,10 @@
 
 - name: Install open-vm-tools.
   apt: name=open-vm-tools state=installed
-  when: vmware_install_open_vm_tools | bool
+  when: vmware_install_open_vm_tools
 
-# Install VMware Tools when running under VMware.
+# Install VMware Tools if not using open-vm-tools.
 - block:
-
   - name: Create temporary directories for VMware tools.
     file:
       path: "/tmp/{{ item }}"
@@ -26,7 +24,7 @@
       src: /home/vagrant/linux.iso
       fstype: iso9660
       state: mounted
-    
+
   - name: Decompress VMware Tools installer into archive folder.
     shell: tar xzf /tmp/vmfusion/VMwareTools-*.tar.gz -C /tmp/vmfusion-archive
 
@@ -34,7 +32,7 @@
     shell: /tmp/vmfusion-archive/vmware-tools-distrib/vmware-install.pl --default
     register: vmtools_installer_output
 
-  - name: Run the VMware tools installer with the --force-install
+  - name: Run the VMware tools installer with --force-install.
     shell: /tmp/vmfusion-archive/vmware-tools-distrib/vmware-install.pl --default --force-install
     when: vmtools_installer_output.stdout.find('open-vm-tools') != -1
 
@@ -57,6 +55,4 @@
     file:
       path: /home/vagrant/linux.iso
       state: absent
-    
-  when: not (vmware_install_open_vm_tools | bool)
-  
+  when: not vmware_install_open_vm_tools
