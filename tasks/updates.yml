@@ -1,0 +1,24 @@
+---
+- name: Ensure host is updated.
+  apt:
+    upgrade: dist
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Check if reboot is required.
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_required
+
+- name: Ensure host is rebooted after updates.
+  shell: sleep 2 && shutdown -r now "Ansible updates triggered"
+  async: 0
+  poll: 0
+  ignore_errors: true
+  register: is_rebooted
+  when: reboot_required.stat.exists
+
+- name: Waiting for host to come back.
+  local_action: wait_for port="{{ ansible_port }}" host="{{ ansible_host }}" delay=45
+  become: false
+  when: is_rebooted | changed
