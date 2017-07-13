@@ -1,55 +1,62 @@
 ---
-- name: Install VMware tools.
-  apt: name=open-vm-tools state=installed
-
-- name: Create temporary directories for VMware tools.
-  file:
-    path: "/tmp/{{ item }}"
-    state: directory
-  with_items:
-    - vmfusion
-    - vmfusion-archive
 
 - name: Create /mnt/hgfs directory for synced folder mounts.
   file:
     path: /mnt/hgfs
     state: directory
 
-- name: Mount VMware tools.
-  mount:
-    name: /tmp/vmfusion
-    src: /home/vagrant/linux.iso
-    fstype: iso9660
-    state: mounted
-  when: ansible_distribution_version != "16.04"
+- name: Install open-vm-tools.
+  apt: name=open-vm-tools state=installed
+  when: vmware_install_open_vm_tools | bool
 
-- name: Decompress VMware Tools installer into archive folder.
-  shell: tar xzf /tmp/vmfusion/VMwareTools-*.tar.gz -C /tmp/vmfusion-archive
-  when: ansible_distribution_version != "16.04"
+# Install VMware Tools when running under VMware.
+- block:
 
-- name: Run the VMware tools installer.
-  shell: /tmp/vmfusion-archive/vmware-tools-distrib/vmware-install.pl --default
-  when: ansible_distribution_version != "16.04"
+  - name: Create temporary directories for VMware tools.
+    file:
+      path: "/tmp/{{ item }}"
+      state: directory
+    with_items:
+      - vmfusion
+      - vmfusion-archive
 
-- name: Unmount VMware tools.
-  mount:
-    name: /tmp/vmfusion
-    src: /home/vagrant/linux.iso
-    fstype: iso9660
-    state: absent
-  when: ansible_distribution_version != "16.04"
+  - name: Mount VMware tools.
+    mount:
+      name: /tmp/vmfusion
+      src: /home/vagrant/linux.iso
+      fstype: iso9660
+      state: mounted
+    
+  - name: Decompress VMware Tools installer into archive folder.
+    shell: tar xzf /tmp/vmfusion/VMwareTools-*.tar.gz -C /tmp/vmfusion-archive
 
-- name: Remove temporary directories for VMware tools.
-  file:
-    path: "/tmp/{{ item }}"
-    state: absent
-  with_items:
-    - vmfusion
-    - vmfusion-archive
-  when: ansible_distribution_version != "16.04"
+  - name: Run the VMware tools installer.
+    shell: /tmp/vmfusion-archive/vmware-tools-distrib/vmware-install.pl --default
+    register: vmtools_installer_output
 
-- name: Delete VMWare Tools.
-  file:
-    path: /home/vagrant/linux.iso
-    state: absent
-  when: ansible_distribution_version != "16.04"
+  - name: Run the VMware tools installer with the --force-install
+    shell: /tmp/vmfusion-archive/vmware-tools-distrib/vmware-install.pl --default --force-install
+    when: vmtools_installer_output.stdout.find('open-vm-tools') != -1
+
+  - name: Unmount VMware tools.
+    mount:
+      name: /tmp/vmfusion
+      src: /home/vagrant/linux.iso
+      fstype: iso9660
+      state: absent
+
+  - name: Remove temporary directories for VMware tools.
+    file:
+      path: "/tmp/{{ item }}"
+      state: absent
+    with_items:
+      - vmfusion
+      - vmfusion-archive
+
+  - name: Delete VMWare Tools.
+    file:
+      path: /home/vagrant/linux.iso
+      state: absent
+    
+  when: not (vmware_install_open_vm_tools | bool)
+  
