@@ -6,7 +6,7 @@
 
 - name: Install open-vm-tools.
   apt: name=open-vm-tools state=installed
-  when: vmware_install_open_vm_tools
+  when: vmware_install_open_vm_tools | bool
 
 # Install VMware Tools if not using open-vm-tools.
 - block:
@@ -55,4 +55,4 @@
     file:
       path: /home/vagrant/linux.iso
       state: absent
-  when: not vmware_install_open_vm_tools
+  when: not ( vmware_install_open_vm_tools | bool )
