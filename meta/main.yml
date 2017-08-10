@@ -7,7 +7,7 @@ galaxy_info:
   company: "Midwestern Mac, LLC"
   issue_tracker_url: "https://github.com/geerlingguy/ansible-role-packer-debian"
   license: "license (BSD, MIT)"
-  min_ansible_version: 2.0
+  min_ansible_version: 2.2
   platforms:
     - name: Debian
       versions:
@@ -20,3 +20,4 @@ galaxy_info:
     - system
     - packaging
     - development
+    - packer
