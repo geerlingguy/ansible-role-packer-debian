@@ -6,11 +6,11 @@
 
 - name: Install open-vm-tools.
   apt: name=open-vm-tools state=installed
-  when: vmware_install_open_vm_tools
+  when: vmware_install_open_vm_tools | bool
 
 # Install VMware Tools if not using open-vm-tools.
 - block:
-  - name: Create temporary directories for VMware tools.
+  - name: Create temporary directories for VMware Tools.
     file:
       path: "/tmp/{{ item }}"
       state: directory
@@ -18,32 +18,41 @@
       - vmfusion
       - vmfusion-archive
 
-  - name: Mount VMware tools.
+  - name: Mount VMware Tools.
     mount:
       name: /tmp/vmfusion
       src: /home/vagrant/linux.iso
       fstype: iso9660
       state: mounted
 
-  - name: Decompress VMware Tools installer into archive folder.
-    shell: tar xzf /tmp/vmfusion/VMwareTools-*.tar.gz -C /tmp/vmfusion-archive
+  - name: Get VMware Tools installer name.
+    shell: ls -la /tmp/vmfusion/ | grep VMwareTools | grep tar.gz | awk '{print $9}'
+    register: vmtools_installer_name
+    failed_when: vmtools_installer_name.rc | int != 0 or vmtools_installer_name.stdout ==''
+    changed_when: false
 
-  - name: Run the VMware tools installer.
+  - name: Decompress VMware Tools installer into archive folder.
+    unarchive:
+      src: /tmp/vmfusion/{{ vmtools_installer_name.stdout }}
+      dest: /tmp/vmfusion-archive
+      remote_src: yes
+
+  - name: Run the VMware Tools installer.
     shell: /tmp/vmfusion-archive/vmware-tools-distrib/vmware-install.pl --default
     register: vmtools_installer_output
 
-  - name: Run the VMware tools installer with --force-install.
+  - name: Run the VMware Tools installer with the --force-install
     shell: /tmp/vmfusion-archive/vmware-tools-distrib/vmware-install.pl --default --force-install
     when: vmtools_installer_output.stdout.find('open-vm-tools') != -1
 
-  - name: Unmount VMware tools.
+  - name: Unmount VMware Tools.
     mount:
       name: /tmp/vmfusion
       src: /home/vagrant/linux.iso
       fstype: iso9660
       state: absent
 
-  - name: Remove temporary directories for VMware tools.
+  - name: Remove temporary directories for VMware Tools.
     file:
       path: "/tmp/{{ item }}"
       state: absent
@@ -55,4 +64,4 @@
     file:
       path: /home/vagrant/linux.iso
       state: absent
-  when: not vmware_install_open_vm_tools
+  when: not ( vmware_install_open_vm_tools | bool )
