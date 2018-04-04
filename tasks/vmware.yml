@@ -5,7 +5,7 @@
     state: directory
 
 - name: Install open-vm-tools.
-  apt: name=open-vm-tools state=installed
+  apt: name=open-vm-tools state=present
   when: vmware_install_open_vm_tools
 
 # Install VMware Tools if not using open-vm-tools.
