@@ -86,6 +86,7 @@
 
 - name: Clean up apt.
   command: "{{ item }}"
+  changed_when: false
   with_items:
     - apt-get -y autoremove
     - apt-get -y clean
