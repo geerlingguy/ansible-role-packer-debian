@@ -1,2 +1,5 @@
 ---
 vmware_install_open_vm_tools: no
+
+# Configure ssh for "vagrant" user
+config_vagrant_default_ssh: true
