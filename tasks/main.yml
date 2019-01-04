@@ -28,21 +28,25 @@
       line: 'GSSAPIAuthentication no'
 
 # Vagrant SSH configuration.
-- name: Configure Vagrant .ssh directory.
-  file:
-    path: /home/vagrant/.ssh
-    state: directory
-    owner: vagrant
-    group: vagrant
-    mode: 0700
+- name: Configure Vagrant user .ssh public key
+  block:
+    - name: Configure Vagrant .ssh directory.
+      file:
+        path: /home/vagrant/.ssh
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: 0700
 
-- name: Get Vagrant's public key.
-  get_url:
-    url: https://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub
-    dest: /home/vagrant/.ssh/authorized_keys
-    owner: vagrant
-    group: vagrant
-    mode: 0600
+    - name: Get Vagrant's public key.
+      get_url:
+        url: https://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub
+        dest: /home/vagrant/.ssh/authorized_keys
+        owner: vagrant
+        group: vagrant
+        mode: 0600
+  
+  when: config_vagrant_default_ssh == true
 
 # VirtualBox tools installation.
 - name: Check if VirtualBox is running the guest VM.
@@ -64,21 +68,22 @@
 
 # Cleanup tasks.
 - name: Remove unneeded packages.
-  apt: "name={{ item }} state=absent"
-  with_items:
-    - ppp
-    - pppconfig
-    - pppoeconf
-    - cpp
-    - gcc
-    - g++
-    - libx11-data
-    - xauth
-    - libxmuu1
-    - libxcb1
-    - libx11-6
-    - libxext6
-    - linux-source
+  apt:
+    name: 
+      - ppp
+      - pppconfig
+      - pppoeconf
+      - cpp
+      - gcc
+      - g++
+      - libx11-data
+      - xauth
+      - libxmuu1
+      - libxcb1
+      - libx11-6
+      - libxext6
+      - linux-source
+    state: absent
 
 - name: Remove unneeded packages (by regex).
   shell: "apt-get -y remove '.*-dev$'"
