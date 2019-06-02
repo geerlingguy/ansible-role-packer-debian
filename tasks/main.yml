@@ -64,21 +64,22 @@
 
 # Cleanup tasks.
 - name: Remove unneeded packages.
-  apt: "name={{ item }} state=absent"
-  with_items:
-    - ppp
-    - pppconfig
-    - pppoeconf
-    - cpp
-    - gcc
-    - g++
-    - libx11-data
-    - xauth
-    - libxmuu1
-    - libxcb1
-    - libx11-6
-    - libxext6
-    - linux-source
+  apt:
+    name:
+      - ppp
+      - pppconfig
+      - pppoeconf
+      - cpp
+      - gcc
+      - g++
+      - libx11-data
+      - xauth
+      - libxmuu1
+      - libxcb1
+      - libx11-6
+      - libxext6
+      - linux-source
+    state: absent
 
 - name: Remove unneeded packages (by regex).
   shell: "apt-get -y remove '.*-dev$'"
