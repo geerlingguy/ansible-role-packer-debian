@@ -6,14 +6,6 @@
   shell: "apt-get -y install linux-headers-$(uname -r)"
   tags: ['skip_ansible_lint']
 
-- name: Add configuration to update apt cache on boot.
-  copy:
-    src: refresh-apt.conf
-    dest: /etc/init/refresh-apt.conf
-    owner: root
-    group: root
-    mode: 0644
-
 # SSH daemon configuration.
 - name: Configure SSH daemon.
   lineinfile:
