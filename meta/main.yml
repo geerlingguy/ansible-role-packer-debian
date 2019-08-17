@@ -2,10 +2,9 @@
 dependencies: []
 
 galaxy_info:
-  author: geerlingguy
+  author: richardskumat
   description: Debian/Ubuntu configuration for Packer.
-  company: "Midwestern Mac, LLC"
-  issue_tracker_url: "https://github.com/geerlingguy/ansible-role-packer-debian"
+  company: none
   license: "license (BSD, MIT)"
   min_ansible_version: 2.4
   platforms:

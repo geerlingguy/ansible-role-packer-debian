@@ -46,7 +46,7 @@
 
 # VMware tools installation.
 - name: Check if VMWare is running the guest VM.
-  shell: "dmesg | grep VMware | wc -l"
+  shell: "dmesg | grep 'Hypervisor detected: VMware' | wc -l"
   changed_when: false
   failed_when: false
   register: vmware_check
