@@ -1,2 +1,3 @@
 ---
 vmware_install_open_vm_tools: no
+remove_unneeded_packages: yes

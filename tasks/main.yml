@@ -72,6 +72,7 @@
       - libxext6
       - linux-source
     state: absent
+  when: remove_unneeded_packages
 
 - name: Remove unneeded packages (by regex).
   shell: "apt-get -y remove '.*-dev$'"
