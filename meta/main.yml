@@ -2,6 +2,7 @@
 dependencies: []
 
 galaxy_info:
+  role_name: packer-debian
   author: geerlingguy
   description: Debian/Ubuntu configuration for Packer.
   company: "Midwestern Mac, LLC"
