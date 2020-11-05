@@ -71,9 +71,9 @@ If you'd like to add additional roles, make sure you add them to the `role_paths
 
 Available variables are listed below, along with default values (see defaults/main.yml):
 
-    vmware_install_open_vm_tools: no
+    vmware_install_open_vm_tools: false
 
-(VMware only) Using the `vmware_install_open_vm_tools` variable, you can select what kind of integration components will be installed into the VMware box. The default (`no`) installs VMware Tools, and not `open-vm-tools`.
+(VMware only) Using the `vmware_install_open_vm_tools` variable, you can select what kind of integration components will be installed into the VMware box. The default (`false`) installs VMware Tools, and not `open-vm-tools`.
 
 Read more:
 
