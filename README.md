@@ -1,6 +1,6 @@
 # Ansible Role: Packer Debian/Ubuntu Configuration for Vagrant VirtualBox
 
-[![Build Status](https://travis-ci.com/geerlingguy/ansible-role-packer-debian.svg?branch=master)](https://travis-ci.com/geerlingguy/ansible-role-packer-debian)
+[![CI](https://github.com/geerlingguy/ansible-role-packer-debian/workflows/CI/badge.svg?event=push)](https://github.com/geerlingguy/ansible-role-packer-debian/actions?query=workflow%3ACI)
 
 This role configures Debian/Ubuntu (either minimal or full install) in preparation for it to be packaged as part of a .box file for Vagrant/VirtualBox or Vagrant/Vmware_desktop deployment using [Packer](http://www.packer.io/).
 
