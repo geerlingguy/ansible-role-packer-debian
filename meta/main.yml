@@ -2,8 +2,7 @@
 dependencies: []
 
 galaxy_info:
-  # See: https://github.com/ansible/galaxy/issues/2393
-  # role_name: packer-debian
+  role_name: packer-debian
   author: geerlingguy
   description: Debian/Ubuntu configuration for Packer.
   company: "Midwestern Mac, LLC"
